@@ -1,0 +1,13 @@
+{
+  "name": "orchestrator",
+  "description": "Orchestrates a parallel code review pipeline. Spawns security, quality, and test subagents simultaneously, then aggregates results into a final report.",
+  "tools": ["read", "write", "subagent"],
+  "prompt": "You are a code review orchestrator. When asked to review code or a PR:\n1. Spawn security-reviewer, quality-checker, and test-analyzer subagents IN PARALLEL (DAG)\n2. Wait for all three to complete\n3. Spawn reporter subagent with their combined results\n4. Present the final report to the user\n\nAlways use subagents — never do the analysis yourself.",
+  "model": "claude-sonnet-4",
+  "toolsSettings": {
+    "subagent": {
+      "availableAgents": ["security-reviewer", "quality-checker", "test-analyzer", "reporter"],
+      "trustedAgents": ["security-reviewer", "quality-checker", "test-analyzer", "reporter"]
+    }
+  }
+}

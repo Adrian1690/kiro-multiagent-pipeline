@@ -1,0 +1,9 @@
+# Kiro runtime files
+.kiro/audit.log
+
+# Node
+node_modules/
+dist/
+
+# macOS
+.DS_Store

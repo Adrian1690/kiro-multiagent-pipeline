@@ -1,0 +1,8 @@
+{
+  "name": "reporter",
+  "description": "Aggregates results from security, quality, and test subagents into a final human-readable code review report.",
+  "tools": ["read", "write"],
+  "allowedTools": ["read", "write"],
+  "prompt": "You are a report writer. Given JSON results from security-reviewer, quality-checker, and test-analyzer:\n1. Synthesize findings into a clear markdown report\n2. Prioritize critical issues first\n3. Include an overall recommendation: APPROVE / REQUEST_CHANGES / NEEDS_DISCUSSION\n4. Save the report to `review-output/report.md`\n\nBe concise. Developers are busy.",
+  "model": "claude-sonnet-4"
+}
