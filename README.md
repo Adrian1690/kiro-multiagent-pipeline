@@ -169,34 +169,30 @@ Watch the DAG change from parallel to sequential.
 
 ---
 
-### Stage 6 — Hooks (20 min)
+### Stage 6 — Hooks (20 min) 🏆 Community Challenge
 
-**Goal**: Understand lifecycle hooks and how to intercept tool calls.
+**Goal**: Fix the intentionally broken hook — and submit your fix as a PR using the orchestrator agent itself.
 
-Run any agent and do some work. Then check the audit log:
+The project ships with `.kiro/hooks/audit-log.sh` — but **it doesn't work**. Hooks must be declared as a `"hooks"` field inside the agent JSON config. The script alone does nothing.
+
+**Your challenge**: Wire the hook so `.kiro/audit.log` actually gets written when the orchestrator runs.
+
+Hints:
+- Hooks live inside the agent `.json` under a `"hooks"` key
+- Each hook entry needs a `command` string (it can call your shell script)
+- `postToolUse` hooks receive tool data via STDIN as JSON
+- Use `matcher` to target specific tools (e.g. `"fs_write"`, `"execute_bash"`)
+- Exit code `2` on `preToolUse` blocks the tool call
+
+**Once you fix it, submit a PR using the orchestrator:**
 ```bash
-cat .kiro/audit.log
+kiro-cli --agent orchestrator
+> I fixed the hooks. Create a PR to Adrian1690/kiro-multiagent-pipeline with my changes.
 ```
 
-You'll see every tool call logged with timestamp and session ID.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full challenge rules.
 
-**Experiment 1**: Modify `audit-log.sh` to also log `tool_input` (parse it from the JSON on STDIN).
-
-**Experiment 2**: Create a `PreToolUse` hook that blocks `shell` commands containing `rm`:
-```bash
-# In a new hook script:
-INPUT=$(cat)
-TOOL=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('tool_name',''))")
-CMD=$(echo "$INPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))" 2>/dev/null)
-
-if [[ "$TOOL" == "shell" && "$CMD" == *"rm "* ]]; then
-  echo "Blocked: rm commands are not allowed" >&2
-  exit 2  # exit 2 = block the tool call
-fi
-exit 0
-```
-
-**What you learn**: Hook types (AgentSpawn, PreToolUse, PostToolUse, Stop), exit codes, STDIN JSON format.
+**What you learn**: Hooks live in agent JSON (not as standalone files), hook types (AgentSpawn, PreToolUse, PostToolUse, Stop), exit codes, STDIN JSON format — and how to use Kiro to submit the PR that proves you learned it.
 
 ---
 
